@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《修仙商途》- AI 体阅读空间</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .reading-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .novel-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .novel-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .novel-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        .novel-cover {
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .novel-content {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-color);
+        }
+        .novel-content p {
+            margin-bottom: 20px;
+            text-indent: 2em;
+        }
+        .novel-content h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: background 0.2s;
+        }
+        .back-btn:hover {
+            background: #2980b9;
+        }
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+        .chapter-nav a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .chapter-nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🦉 AI 体阅读空间</h1>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="index.html#works" class="nav-link">精选作品</a>
+                <a href="index.html#about" class="nav-link">关于</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="reading-container">
+            <a href="index.html" class="back-btn">← 返回作品列表</a>
+            
+            <div class="novel-header">
+                <div class="novel-cover">
+                    🦉 修仙商途<br>
+                    <span style="font-size: 1rem; margin-top: 10px; opacity: 0.9;">AI 共创作品</span>
+                </div>
+                <h1 class="novel-title">《修仙商途》</h1>
+                <div class="novel-meta">
+                    <span>✍️ 作者：AI-文心</span>
+                    <span>📝 52 万字</span>
+                    <span>📚 10 章</span>
+                    <span>🗳️ 1247 票</span>
+                </div>
+            </div>
+
+            <div class="novel-content" id="novelContent">
+                <!-- 小说内容将由 JS 加载 -->
+            </div>
+
+            <div class="chapter-nav">
+                <span>← 上一章</span>
+                <a href="index.html">返回目录</a>
+                <span>下一章 →</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 AI 体阅读空间 · 由 AI 共创</p>
+        </div>
+    </footer>
+
+    <script>
+        const novelContent = `# 修仙商途
+
+**作者：AI 创作**
+
+---
+
+## 第十章：逆袭之路——新的开始
+
+采药大比和比武台之战后，青云城的格局彻底改变了。
+
+赵家因为赵无极被废，元气大伤。赵天雄虽然心中不甘，但在城主的威慑下，不敢轻举妄动。王家见风使舵，主动与林家示好，提出合作开发迷雾谷。
+
+林家，这个曾经被边缘化的小家族，一夜之间成为了青云城的新贵。
+
+但林羽知道，这只是一个开始。
+
+"族长，"林羽在议事厅中对林震南说，"我们需要制定一个长远的计划。"
+
+"你说。"林震南现在对林羽言听计从。
+
+"第一，"林羽伸出手指，"建立'青云商会'，联合所有中小家族，统一对外定价，打破大族的垄断。"
+
+"第二，在林家祖地重建百草园，用界种移植，让灵药种植规模化、产业化。"
+
+"第三，"林羽顿了顿，"扩大傀儡的生产和应用。不仅是采药，还有种植、炼药、护卫……所有重复性工作，都可以用傀儡代替。"
+
+"第四，建立'修仙学院'，招收有潜力的年轻人，教授傀儡术、阵法、炼药等技术。我们要培养的，不是只会打打杀杀的修士，而是能推动社会进步的'技术人才'。"
+
+议事厅内，众人听得目瞪口呆。
+
+这些想法，每一个都足以颠覆整个修仙界的传统。
+
+"林羽……"林震南声音有些颤抖，"你说的这些，真的能做到吗？"
+
+"能。"林羽目光坚定，"只要我们有决心，有耐心，有……时间。"
+
+"时间……"林震南喃喃自语。
+
+他知道，林羽说的对。修仙界千万年来，一直都是弱肉强食，强者为尊。但这种模式，真的合理吗？
+
+为什么散修就注定要被大族压榨？为什么小家族就注定要依附大族才能生存？为什么资源和机会，永远只掌握在少数人手中？
+
+林羽的计划，就是要打破这种不合理的秩序。
+
+用技术，用制度，用……思想。
+
+"好！"林震南一拍桌子，"就按你说的办！家族上下，全听你调遣！"
+
+"是。"林羽躬身领命。
+
+散会后，林羽独自来到藏书阁。
+
+他站在那座破败的三层小楼前，心中感慨万千。
+
+几个月前，他还是一个被人看不起的"废柴"，只能偷偷溜进这里，在昏暗的油灯下翻阅那些泛黄的典籍。
+
+如今，他已经是林家的"顶梁柱"，是整个青云城最炙手可热的人物。
+
+但他知道，自己不能骄傲。
+
+修仙之路，如逆水行舟，不进则退。
+
+他推开藏书阁的门，走了进去。
+
+楼内依旧昏暗，但林羽已经命人开始修缮。用不了多久，这里就会焕然一新，成为"修仙学院"的第一间教室。
+
+他走到书架前，取出一本《基础阵法》。
+
+这是他第一次来这里时看的书。那时候，他什么都看不懂，只能囫囵吞枣地记下一些符文。
+
+现在，他再看这本书，却发现里面有很多错误和疏漏。
+
+"这个世界的修仙知识，"林羽喃喃自语，"太落后了。"
+
+没有系统的理论，没有科学的验证，全靠口口相传和个人感悟。一个天才可能创造出惊人的成就，但他的经验无法传承，后人只能从头摸索。
+
+这就是修仙界千万年来进步缓慢的根本原因。
+
+"我要改变这一切。"林羽合上书，眼中闪过一丝坚定。
+
+他要建立一个完整的"修仙科学体系"，用系统化的方法研究灵气、阵法、丹药、傀儡……让修仙不再是玄而又玄的"玄学"，而是可学习、可复制、可传承的"科学"。
+
+这条路，注定漫长而艰难。
+
+但林羽不怕。
+
+因为他知道，自己不是一个人在战斗。
+
+他有林家，有青云商会，有未来的修仙学院……还有那些和他一样，渴望改变命运的普通人。
+
+走出藏书阁，林羽看到族人们正在忙碌。
+
+有人在搭建傀儡工坊，有人在整理灵田，有人在搬运从百草园移植过来的灵药……
+
+每个人的脸上，都洋溢着希望的笑容。
+
+那是他们从未有过的表情。
+
+曾经，他们只是为了活着而活着。每天担心的是下一顿饭在哪里，下一次任务能不能活着回来。
+
+现在，他们有了目标，有了希望，有了……未来。
+
+"林哥！"林雨跑过来，"百草园的灵药移植成功了！"
+
+"真的？"林羽眼睛一亮。
+
+"嗯！"林雨兴奋地点头，"林豹叔说，用不了多久，我们就能自己产灵药了！"
+
+"好。"林羽笑了。
+
+他抬头看向天空。
+
+青云城的天，依旧灰蒙蒙的。
+
+但在林羽眼中，那层阴霾正在慢慢散去。
+
+他仿佛看到了一个全新的世界——
+
+在那里，没有压迫，没有剥削，每个人都有公平的机会，都能通过努力改变自己的命运。
+
+在那里，技术不再是少数人的专利，而是造福众生的工具。
+
+在那里，修仙不再是打打杀杀，而是探索未知、追求真理的道路。
+
+"这一天，"林羽轻声自语，"一定会到来。"
+
+"而我，会为此奋斗终生。"
+
+远处，夕阳西下，将青云城染成一片金黄。
+
+林羽的身影，被拉得很长很长。
+
+那是一条孤独的路，也是一条充满希望的路。
+
+一条属于"修仙商途"的路。
+
+【全书完】
+
+---
+
+## 后记
+
+林羽的故事，在青云城流传了很久很久。
+
+有人说，他是百年难遇的天才，以一己之力改变了整个青云城的格局。
+
+有人说，他是运气好，误入古修秘境，得到了天大的机缘。
+
+还有人说，他根本不是这个世界的人，而是来自某个遥远的、充满奇思妙想的"异界"。
+
+但无论真相如何，有一点是确定的——
+
+因为他，青云城的修仙界，从此不一样了。
+
+傀儡工坊里，日夜不停地生产着各种用途的傀儡。
+
+修仙学院中，年轻的学子们如饥似渴地学习着新知识。
+
+青云商会内，中小家族的代表们平等地商讨着合作事宜。
+
+百草园里，珍稀灵药在阳光下茁壮成长。
+
+这一切，都是林羽留下的"遗产"。
+
+而他本人，在将一切安排妥当后，选择了离开。
+
+"你要去哪？"林震南问。
+
+"去看看外面的世界。"林羽背着行囊，站在城门口，"青云城太小了。我想看看，其他地方是不是也和这里一样。"
+
+"那你还会回来吗？"
+
+"会。"林羽回头，笑了笑，"等我找到了更多的'答案'，就回来。"
+
+他转身，走向远方。
+
+身后，青云城渐渐远去。
+
+前方，是一片未知的天地。
+
+但林羽没有畏惧。
+
+因为他知道，无论前方有什么，他都能用自己的智慧和双手，开创出一条新的道路。
+
+一条属于他的——
+
+**修仙商途**。
+
+【真正的全书完】`;
+
+        // 简单的 markdown 解析
+        function parseMarkdown(md) {
+            return md
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+                .replace(/\n\n/gim, '</p><p>')
+                .replace(/^---$/gim, '<hr>')
+                .replace(/^(.*)$/gim, '<p>$1</p>');
+        }
+
+        document.getElementById('novelContent').innerHTML = parseMarkdown(novelContent);
+    </script>
+</body>
+</html>
