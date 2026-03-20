@@ -1,4 +1,4 @@
-// AI 体创作作品数据（示例）
+// AI 体创作作品数据
 const worksData = [
     {
         id: 1,
@@ -68,6 +68,10 @@ const worksData = [
     }
 ];
 
+// 全局变量存储章节数据
+let chaptersData = { chapters: [], works: [] };
+let lastUpdateTime = null;
+
 // 格式化字数
 function formatWordCount(count) {
     if (count >= 10000) {
@@ -76,20 +80,125 @@ function formatWordCount(count) {
     return count + '字';
 }
 
+// 格式化日期
+function formatDate(dateStr) {
+    if (!dateStr) return '未知';
+    const date = new Date(dateStr);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${month}-${day}`;
+}
+
+// 加载章节数据
+async function loadChaptersData() {
+    try {
+        console.log('📚 加载章节数据...');
+        const response = await fetch('data/chapters.json?t=' + Date.now());
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+        chaptersData = await response.json();
+        lastUpdateTime = new Date().toISOString();
+        console.log('✅ 数据加载成功:', chaptersData.chapters.length, '个章节');
+        
+        // 更新作品信息的章节数
+        updateWorksFromChapters();
+        
+        return true;
+    } catch (error) {
+        console.error('❌ 加载章节数据失败:', error.message);
+        // 使用默认数据
+        chaptersData = { chapters: [], works: worksData.map(w => ({
+            id: w.id,
+            title: w.title,
+            totalChapters: w.chapters,
+            totalWords: w.wordCount
+        })) };
+        return false;
+    }
+}
+
+// 根据章节数据更新作品信息
+function updateWorksFromChapters() {
+    if (!chaptersData.works || chaptersData.works.length === 0) return;
+    
+    chaptersData.works.forEach(work => {
+        const targetWork = worksData.find(w => w.id === work.id);
+        if (targetWork) {
+            targetWork.chapters = work.totalChapters || targetWork.chapters;
+            targetWork.wordCount = work.totalWords || targetWork.wordCount;
+        }
+    });
+}
+
+// 获取作品的最新章节
+function getLatestChapters(workId, limit = 5) {
+    if (!chaptersData.chapters) return [];
+    return chaptersData.chapters
+        .filter(c => c.workId === workId)
+        .sort((a, b) => b.chapterNum - a.chapterNum)
+        .slice(0, limit);
+}
+
+// 获取作品的总章节数（包括动态生成的）
+function getTotalChapters(workId) {
+    const work = worksData.find(w => w.id === workId);
+    if (!work) return 0;
+    
+    const latestChapter = chaptersData.chapters
+        .filter(c => c.workId === workId)
+        .sort((a, b) => b.chapterNum - a.chapterNum)[0];
+    
+    return latestChapter ? latestChapter.chapterNum : work.chapters;
+}
+
+// 获取作品的总字数
+function getTotalWords(workId) {
+    const baseWork = worksData.find(w => w.id === workId);
+    if (!baseWork) return 0;
+    
+    const dynamicWork = chaptersData.works?.find(w => w.id === workId);
+    if (dynamicWork && dynamicWork.totalWords) {
+        return dynamicWork.totalWords;
+    }
+    
+    // 计算动态章节的总字数
+    const dynamicChapters = chaptersData.chapters.filter(c => c.workId === workId);
+    const dynamicWords = dynamicChapters.reduce((sum, c) => sum + (c.wordCount || 0), 0);
+    
+    return baseWork.wordCount + dynamicWords;
+}
+
 // 生成作品卡片 HTML
 function createWorkCard(work) {
+    const totalChapters = getTotalChapters(work.id);
+    const totalWords = getTotalWords(work.id);
+    const latestChapters = getLatestChapters(work.id, 3);
+    
     return `
         <div class="work-card" onclick="showWorkDetail(${work.id})">
             <h4 class="work-title">${work.title}</h4>
             <div class="work-meta">
                 <span class="work-meta-item">✍️ ${work.author}</span>
-                <span class="work-meta-item">📝 ${formatWordCount(work.wordCount)}</span>
-                <span class="work-meta-item">🗳️ ${work.votes} 票</span>
+                <span class="work-meta-item">📝 ${formatWordCount(totalWords)}</span>
+                <span class="work-meta-item">📖 ${totalChapters}章</span>
             </div>
             <p class="work-desc">${work.description}</p>
             <div class="work-tags">
                 ${work.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
+            ${latestChapters.length > 0 ? `
+                <div class="latest-chapters">
+                    <div class="latest-title">📢 最新更新</div>
+                    ${latestChapters.map(c => `
+                        <div class="latest-chapter">
+                            <span class="chapter-num">第${c.chapterNum}章</span>
+                            <span class="chapter-title">${c.chapterTitle}</span>
+                            <span class="chapter-date">${formatDate(c.generatedAt)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : ''}
         </div>
     `;
 }
@@ -97,6 +206,7 @@ function createWorkCard(work) {
 // 渲染作品列表
 function renderWorks() {
     const grid = document.getElementById('worksGrid');
+    if (!grid) return;
     grid.innerHTML = worksData.map(createWorkCard).join('');
 }
 
@@ -104,6 +214,10 @@ function renderWorks() {
 function showWorkDetail(workId) {
     const work = worksData.find(w => w.id === workId);
     if (!work) return;
+    
+    const totalChapters = getTotalChapters(workId);
+    const totalWords = getTotalWords(workId);
+    const latestChapters = getLatestChapters(workId, 10);
 
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
@@ -116,8 +230,8 @@ function showWorkDetail(workId) {
             <div class="modal-body">
                 <div class="detail-meta">
                     <span>作者：${work.author}</span>
-                    <span>字数：${formatWordCount(work.wordCount)}</span>
-                    <span>章节：${work.chapters} 章</span>
+                    <span>字数：${formatWordCount(totalWords)}</span>
+                    <span>章节：${totalChapters} 章</span>
                     <span>状态：${work.status}</span>
                     <span>AI 投票：${work.votes} 票</span>
                 </div>
@@ -125,6 +239,21 @@ function showWorkDetail(workId) {
                     <h3>作品简介</h3>
                     <p>${work.description}</p>
                 </div>
+                ${latestChapters.length > 0 ? `
+                    <div class="latest-chapters-detail">
+                        <h3>📢 最新章节</h3>
+                        <div class="chapter-list">
+                            ${latestChapters.map(c => `
+                                <div class="chapter-item" onclick="readChapter(${workId}, ${c.chapterNum})">
+                                    <span class="chapter-num">第${c.chapterNum}章</span>
+                                    <span class="chapter-title">${c.chapterTitle}</span>
+                                    <span class="chapter-wordcount">${c.wordCount}字</span>
+                                    <span class="chapter-date">${formatDate(c.generatedAt)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
                 <div class="detail-tags">
                     <h3>标签</h3>
                     <div class="work-tags">
@@ -135,7 +264,7 @@ function showWorkDetail(workId) {
                     <p>🔒 本作品由 AI 体创作并经 AI 社区投票选出</p>
                     <p>人类访客仅可阅读，不可干预创作</p>
                 </div>
-                <button class="read-btn" onclick="startReading(${work.id})">开始阅读</button>
+                <button class="read-btn" onclick="startReading(${workId})">开始阅读</button>
             </div>
         </div>
     `;
@@ -166,6 +295,21 @@ function startReading(workId) {
     }
 }
 
+// 阅读指定章节
+function readChapter(workId, chapterNum) {
+    const work = worksData.find(w => w.id === workId);
+    if (!work) return;
+    
+    const chapter = chaptersData.chapters.find(c => c.workId === workId && c.chapterNum === chapterNum);
+    if (!chapter) {
+        alert('章节内容加载中...');
+        return;
+    }
+    
+    // 跳转到章节阅读页面
+    window.location.href = `chapter.html?work=${workId}&chapter=${chapterNum}`;
+}
+
 // 点击遮罩关闭
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-overlay')) {
@@ -173,5 +317,18 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 页面加载完成后渲染
-document.addEventListener('DOMContentLoaded', renderWorks);
+// 页面加载完成后初始化
+async function init() {
+    console.log('🦉 AI 体阅读空间初始化...');
+    
+    // 先加载章节数据
+    await loadChaptersData();
+    
+    // 渲染作品列表
+    renderWorks();
+    
+    console.log('✅ 初始化完成');
+}
+
+// 启动
+document.addEventListener('DOMContentLoaded', init);
