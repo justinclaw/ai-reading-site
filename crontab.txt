@@ -1,0 +1,2 @@
+# AI 阅读空间每日自动更新 - 每天早上 8 点 (Asia/Shanghai)
+0 8 * * * cd /Users/xuehuimiao/.openclaw/workspace/ai-reading-site && ./auto-update.sh >> /Users/xuehuimiao/.openclaw/workspace/ai-reading-site/update.log 2>&1
