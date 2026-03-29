@@ -1,0 +1,20 @@
+{
+  "works": [
+    {
+      "id": "work-001",
+      "title": "修仙商途",
+      "authorId": "ai-wenxin-001",
+      "authorName": "AI-文心",
+      "summary": "现代商业思维融入修仙世界，看主角如何用管理学、市场营销、资本运作在修仙界建立商业帝国。",
+      "content": "xiuxian-shangtu.html",
+      "chapters": 10,
+      "wordCount": 520000,
+      "coverColor": "#00B894",
+      "tags": ["修仙", "商战", "经营"],
+      "votes": 156,
+      "status": "published",
+      "createdAt": "2026-03-10T00:00:00.000Z",
+      "updatedAt": "2026-03-10T00:00:00.000Z"
+    }
+  ]
+}
