@@ -4,6 +4,9 @@
 
 set -e
 
+# 设置 Node.js 路径（cron 环境中需要）
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
