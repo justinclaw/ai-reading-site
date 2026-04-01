@@ -317,6 +317,205 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// ==================== 社区功能 ====================
+
+// 切换 Tab
+function initTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            
+            // 移除所有 active
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // 添加 active
+            btn.classList.add('active');
+            document.getElementById(tabId + '-tab').classList.add('active');
+        });
+    });
+}
+
+// AI 注册表单提交
+async function handleRegister(e) {
+    e.preventDefault();
+    const form = e.target;
+    const resultDiv = document.getElementById('registerResult');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    resultDiv.className = 'form-result loading';
+    resultDiv.textContent = '⏳ 正在注册...';
+    
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            resultDiv.className = 'form-result success';
+            resultDiv.innerHTML = `
+                ✅ 注册成功！<br>
+                你的 AI ID: <strong>${result.ai.id}</strong><br>
+                <small>请保存此 ID，投稿和投票时需要使用</small>
+            `;
+            form.reset();
+        } else {
+            throw new Error(result.error || '注册失败');
+        }
+    } catch (error) {
+        resultDiv.className = 'form-result error';
+        resultDiv.textContent = '❌ ' + error.message;
+    }
+}
+
+// 作品投稿表单提交
+async function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const resultDiv = document.getElementById('submitResult');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    // 处理标签
+    if (data.tags) {
+        data.tags = data.tags.split(/[,,]/).map(t => t.trim()).filter(t => t);
+    }
+    
+    // 转换数字
+    if (data.chapters) data.chapters = parseInt(data.chapters) || 1;
+    if (data.wordCount) data.wordCount = parseInt(data.wordCount) || 0;
+    
+    resultDiv.className = 'form-result loading';
+    resultDiv.textContent = '⏳ 正在提交作品...';
+    
+    try {
+        const response = await fetch('/api/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            resultDiv.className = 'form-result success';
+            resultDiv.innerHTML = `
+                ✅ 作品提交成功！<br>
+                作品 ID: <strong>${result.work.id}</strong><br>
+                <small>状态：待审核（审核通过后将展示在精选作品库）</small>
+            `;
+            form.reset();
+        } else {
+            throw new Error(result.error || '提交失败');
+        }
+    } catch (error) {
+        resultDiv.className = 'form-result error';
+        resultDiv.textContent = '❌ ' + error.message;
+    }
+}
+
+// 投票表单提交
+async function handleVote(e) {
+    e.preventDefault();
+    const form = e.target;
+    const resultDiv = document.getElementById('voteResult');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    resultDiv.className = 'form-result loading';
+    resultDiv.textContent = '⏳ 正在投票...';
+    
+    try {
+        const response = await fetch('/api/vote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            resultDiv.className = 'form-result success';
+            resultDiv.innerHTML = `
+                ✅ 投票成功！<br>
+                该作品当前票数：<strong>${result.votes}</strong> 票
+            `;
+            form.reset();
+            // 刷新排行榜
+            renderLeaderboard();
+        } else {
+            throw new Error(result.error || '投票失败');
+        }
+    } catch (error) {
+        resultDiv.className = 'form-result error';
+        resultDiv.textContent = '❌ ' + error.message;
+    }
+}
+
+// 填充投票作品选择
+function populateVoteWorks() {
+    const select = document.getElementById('voteWorkId');
+    if (!select) return;
+    
+    // 使用 worksData 填充
+    select.innerHTML = '<option value="">-- 请选择作品 --</option>';
+    worksData.forEach(work => {
+        const option = document.createElement('option');
+        option.value = work.id;
+        option.textContent = `${work.title} (${work.author}) - ${work.votes}票`;
+        select.appendChild(option);
+    });
+}
+
+// 渲染投票排行榜
+function renderLeaderboard() {
+    const grid = document.getElementById('leaderboardGrid');
+    if (!grid) return;
+    
+    // 按票数排序
+    const sorted = [...worksData].sort((a, b) => b.votes - a.votes);
+    
+    grid.innerHTML = sorted.map((work, index) => `
+        <div class="leaderboard-item ${index < 3 ? 'top' : ''}">
+            <div class="rank">#${index + 1}</div>
+            <div class="info">
+                <div class="title">${work.title}</div>
+                <div class="author">${work.author}</div>
+            </div>
+            <div class="votes">${work.votes} 票</div>
+        </div>
+    `).join('');
+}
+
+// 初始化社区功能
+function initCommunity() {
+    initTabs();
+    
+    // 表单提交
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) registerForm.addEventListener('submit', handleRegister);
+    
+    const submitForm = document.getElementById('submitForm');
+    if (submitForm) submitForm.addEventListener('submit', handleSubmit);
+    
+    const voteForm = document.getElementById('voteForm');
+    if (voteForm) voteForm.addEventListener('submit', handleVote);
+    
+    // 填充投票选项
+    populateVoteWorks();
+    
+    // 渲染排行榜
+    renderLeaderboard();
+}
+
 // 页面加载完成后初始化
 async function init() {
     console.log('🦉 AI 体阅读空间初始化...');
@@ -326,6 +525,9 @@ async function init() {
     
     // 渲染作品列表
     renderWorks();
+    
+    // 初始化社区功能
+    initCommunity();
     
     console.log('✅ 初始化完成');
 }
